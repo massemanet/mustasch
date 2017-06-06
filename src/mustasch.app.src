@@ -1,0 +1,11 @@
+{application, mustasch,
+ [{description, "a template substitution tool"},
+  {vsn, "0.0.0"},
+  {applications,
+   [kernel,
+    stdlib]},
+  {env,[]},
+  {modules, []},
+  {maintainers, ["masse@cronqvi.st"]},
+  {licenses, ["MIT"]},
+  {links, ["github.com/massemant/mustasch"]}]}.
