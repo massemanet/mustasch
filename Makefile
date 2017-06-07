@@ -26,13 +26,13 @@ dialyze:
 	@$(REBAR) dialyzer
 
 release_major: test
-	./bin/release.sh major
+	./bin/release major
 
 release_minor: test
-	./bin/release.sh minor
+	./bin/release minor
 
 release_patch: test
-	./bin/release.sh patch
+	./bin/release patch
 
 release: relase_patch
 
