@@ -13,7 +13,7 @@ clean:
 	@find . -name "*~" -exec rm {} \;
 	@$(REBAR) clean
 
-test: compile xref eunit
+test: compile xref eunit dialyze
 
 eunit: all
 	ERL_FLAGS="-sname eunit" $(REBAR) eunit
