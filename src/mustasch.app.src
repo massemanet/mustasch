@@ -1,6 +1,6 @@
 {application, mustasch,
  [{description, "a template substitution tool"},
-  {vsn, "0.0.0"},
+  {vsn, "0.0.1"},
   {applications,
    [kernel,
     stdlib]},

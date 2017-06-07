@@ -1,0 +1,43 @@
+commit 13e97e1ed9f4980a241b32712efb882b2e4ca55a
+Author: mats cronqvist <masse@cronqvi.st>
+Date:   Thu Jun 8 00:01:34 2017 +0200
+
+    v0.0.1
+
+src/mustasch.app.src
+
+commit b4c6d2939ea538eda39e7db2adac708cf2071c9e
+Author: mats cronqvist <masse@cronqvi.st>
+Date:   Wed Jun 7 23:57:33 2017 +0200
+
+    test
+
+Makefile
+bin/release.sh
+rebar.config
+src/mustasch.erl
+test/mustasch_eunit.erl
+
+commit 854f491ca24bfdb8fc2c7a0ebd2fd534842f532c
+Author: mats cronqvist <masse@cronqvi.st>
+Date:   Tue Jun 6 22:27:28 2017 +0200
+
+    initial
+
+.gitignore
+Makefile
+rebar.config
+rebar3
+src/mustasch.app.src
+src/mustasch.erl
+src/mustasch_lexer.xrl
+src/mustasch_parser.yrl
+
+commit 59da5e197634557dea379ce6756347daf6839ffa
+Author: mats cronqvist <masse@cronqvi.st>
+Date:   Tue Jun 6 22:07:30 2017 +0200
+
+    Initial commit
+
+LICENSE
+README.md
