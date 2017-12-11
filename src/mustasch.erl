@@ -123,6 +123,7 @@ wrap(S) when is_list(S) ->
 wrap(A) when is_atom(A) ->
   fun(Ctxt) ->
       case Ctxt of
+        #{}       -> maps:get(A, Ctxt);
         [{_,_}|_] -> proplists:get_value(A,Ctxt);
         _         -> A
       end

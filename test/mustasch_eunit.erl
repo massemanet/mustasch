@@ -23,3 +23,7 @@ t3_test() ->
 t4_test() ->
   ?assertEqual("a",
                mustasch:run(<<"{{ a.string:to_lower }}">>, [{a, "A"}])).
+
+t5_test() ->
+  ?assertEqual("woo",
+               mustasch:run(<<"{{ john }}">>, #{john => "woo"})).
