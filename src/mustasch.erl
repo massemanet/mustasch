@@ -113,14 +113,7 @@ wrap({M,F}) ->
       catch _:R -> throw([{mf,{M,F}},{ctxt,Ctxt},{reason,R}]),""
       end
   end;
-wrap(S) when is_list(S) ->
-  fun(Ctxt) ->
-      case Ctxt of
-        [{_,_}|_] -> proplists:get_value(S,Ctxt);
-        _         -> S
-      end
-  end;
-wrap(A) when is_atom(A) ->
+wrap(A) ->
   fun(Ctxt) ->
       case Ctxt of
         #{}       -> maps:get(A, Ctxt);

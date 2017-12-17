@@ -5,6 +5,7 @@
 % int: an integer
 % sq: single quoted string
 % dq: double quoted string
+% bq: binary quoted string
 % uq: unquoted text
 
 Definitions.
@@ -19,11 +20,14 @@ Rules.
 [^'"}:\.]+ :
   {token,{uq,TokenLine,TokenChars}}.
 
+<<"([^"]|\\")*">> :
+  {token,{bq,TokenLine,btrim(3,TokenChars)}}.
+
 "([^"]|\\")*" :
-  {token,{dq,TokenLine,btrim(TokenChars)}}.
+  {token,{dq,TokenLine,btrim(1,TokenChars)}}.
 
 '([^']|\\')*' :
-  {token,{sq,TokenLine,btrim(TokenChars)}}.
+  {token,{sq,TokenLine,btrim(1,TokenChars)}}.
 
 \. :
   {token,{'.',TokenLine}}.
@@ -36,4 +40,4 @@ Rules.
 
 Erlang code.
 
-btrim(S) -> lists:reverse(tl(lists:reverse(tl(S)))).
+btrim(N,S) -> lists:reverse(lists:nthtail(N,lists:reverse(lists:nthtail(N,S)))).

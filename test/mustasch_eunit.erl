@@ -31,3 +31,7 @@ t5_test() ->
 t6_test() ->
   ?assertEqual("b",
                mustasch:run(<<"{{ 2 }}">>, [a, b, c])).
+
+t7_test() ->
+  ?assertEqual("b",
+               mustasch:run(<<"{{ <<\"k\">> }}">>, #{<<"k">> => b})).
