@@ -2,20 +2,21 @@
 % tokens are;
 % '}}': end token
 % '.', ':': as themselves
-% em: escaped mustache ("\{", "\}")
+% int: an integer
 % sq: single quoted string
 % dq: double quoted string
 % uq: unquoted text
 
 Definitions.
 
-UQ = [^'"}:\.]
-CM = }
 WS = ([\000-\s])
 
 Rules.
 
-{UQ}+ :
+{WS}*[0-9]+{WS}* :
+  {token,{int,TokenLine,list_to_integer(string:strip(TokenChars))}}.
+
+[^'"}:\.]+ :
   {token,{uq,TokenLine,TokenChars}}.
 
 "([^"]|\\")*" :
@@ -30,7 +31,7 @@ Rules.
 : :
   {token,{':',TokenLine}}.
 
-{WS}*{CM}{CM} :
+{WS}*}} :
   {end_token,{'}}',TokenLine}}.
 
 Erlang code.

@@ -27,3 +27,7 @@ t4_test() ->
 t5_test() ->
   ?assertEqual("woo",
                mustasch:run(<<"{{ john }}">>, #{john => "woo"})).
+
+t6_test() ->
+  ?assertEqual("b",
+               mustasch:run(<<"{{ 2 }}">>, [a, b, c])).
