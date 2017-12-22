@@ -1,7 +1,7 @@
 % mustasch lexer grammar.
 % tokens are;
 % '}}': end token
-% '.', ':': as themselves
+% '{{', '.', ':': as themselves
 % int: an integer
 % sq: single quoted string
 % dq: double quoted string
@@ -10,15 +10,16 @@
 
 Definitions.
 
-WS = ([\000-\s])
+WS = [\000-\s]
+REGULAR = [^'"}:0-9<\.\000-\s]
 
 Rules.
 
-{WS}*[0-9]+{WS}* :
-  {token,{int,TokenLine,list_to_integer(string:strip(TokenChars))}}.
+{WS}+ :
+  skip_token.
 
-[^'"}:\.]+ :
-  {token,{uq,TokenLine,TokenChars}}.
+[0-9]+ :
+  {token,{int,TokenLine,TokenChars}}.
 
 <<"([^"]|\\")*">> :
   {token,{bq,TokenLine,btrim(3,TokenChars)}}.
@@ -35,8 +36,14 @@ Rules.
 : :
   {token,{':',TokenLine}}.
 
-{WS}*}} :
+{{ :
+  {token,{'{{',TokenLine}}.
+
+}} :
   {end_token,{'}}',TokenLine}}.
+
+({REGULAR}|<[^<]|<<[^"]|}[^}])+ :
+  {token,{uq,TokenLine,TokenChars}}.
 
 Erlang code.
 
