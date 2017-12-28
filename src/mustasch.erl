@@ -52,6 +52,8 @@ split_at_mustasch(Str) ->
 
 split_at_mustasch(Str,B) ->
   case Str of
+    "\\{"++T-> split_at_mustasch(T,[${|B]);
+    "\\}"++T-> split_at_mustasch(T,[$}|B]);
     "{{"++_ -> {B,Str};
     []      -> {B,""};
     [H|T]   -> split_at_mustasch(T,[H|B])

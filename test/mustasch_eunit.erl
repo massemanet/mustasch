@@ -34,4 +34,16 @@ t6_test() ->
 
 t7_test() ->
   ?assertEqual("b",
-               mustasch:run(<<"{{ <<\"k\">> }}">>, #{<<"k">> => b})).
+               mustasch:run(<<"{{ 2 }}">>, {a, b, c})).
+
+t8_test() ->
+  ?assertEqual("b",
+               mustasch:run(<<"{{ <<\"\{k<\}\">> }}">>, #{<<"{k<}">> => b})).
+
+t9_test() ->
+  ?assertEqual("{{b}}",
+               mustasch:run(<<"\\{\\{{{ <<\"k\">> }}\\}\\}">>, #{<<"k">> => b})).
+
+t10_test() ->
+  ?assertEqual("{{ b }}",
+               mustasch:run(<<"\\{\\{ {{ <<\"k\">> }} \\}\\}">>, #{<<"k">> => b})).

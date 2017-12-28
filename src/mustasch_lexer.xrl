@@ -11,7 +11,7 @@
 Definitions.
 
 WS = [\000-\s]
-REGULAR = [^'"}:0-9<\.\000-\s]
+REGULAR = [^'"{}:0-9<\.\000-\s]
 
 Rules.
 
@@ -42,7 +42,7 @@ Rules.
 }} :
   {end_token,{'}}',TokenLine}}.
 
-({REGULAR}|<[^<]|<<[^"]|}[^}])+ :
+({REGULAR}|<[^<]|<<[^"]|}[^}]|\\{|\\})+ :
   {token,{uq,TokenLine,TokenChars}}.
 
 Erlang code.
