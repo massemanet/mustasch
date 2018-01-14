@@ -38,7 +38,7 @@ t7_test() ->
 
 t8_test() ->
   ?assertEqual("b",
-               mustasch:run(<<"{{ <<\"\{k<\}\">> }}">>, #{<<"{k<}">> => b})).
+               mustasch:run(<<"{{ \"\{k<\}\" }}">>, #{"{k<}" => b})).
 
 t9_test() ->
   ?assertEqual("{{b}}",
