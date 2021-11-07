@@ -1,26 +1,60 @@
-Nonterminals doc string nugget subnugget atom.
-Terminals 'uq' 'dq' 'bq' 'sq' 'int' '.' ':' '{{' '}}'.
-Rootsymbol doc.
+Terminals '{{' '}}' '||' '|' '(' ')' '$' ',' ':' 'int' 'float' 'uq' 'dq' 'sq' 'bq' 'fq' 'var'.
 
-doc -> string                      : ['$1'].
-doc -> doc '{{' nugget '}}' string : '$1' ++ [{'$3'}] ++ ['$5'].
+% unused (for records) Terminals '#' '.' '{' '}'.
+% unused (for bind) Terminals '='.
 
-string -> '$empty'                 : [].
-string -> 'uq'                     : val('$1').
+Nonterminals pattern pipeline element0 element1s element1 function0 literal env function1 arg0s arg0 arg1s arg1 format atom string.
 
-nugget -> '$empty'                 : [{}].
-nugget -> subnugget                : ['$1'].
-nugget -> nugget '.' subnugget     : '$1' ++ ['$3'].
+Rootsymbol pattern.
 
-subnugget -> atom ':' atom         : {'$1','$3'}.
-subnugget -> atom                  : '$1'.
-subnugget -> 'dq'                  : val('$1').
-subnugget -> 'int'                 : list_to_integer(val('$1')).
-subnugget -> 'bq'                  : list_to_binary(val('$1')).
+pattern -> '{{' format '||' pipeline '}}' : {pattern, '$2', '$4'}.
+pattern -> '{{' pipeline '}}'             : {pattern, '', '$2'}.
 
-atom -> 'uq'                       : list_to_atom(val('$1')).
-atom -> 'sq'                       : list_to_atom(val('$1')).
+pipeline -> element0 '|' element1s : {pipeline, ['$1'|'$3']}.
+pipeline -> element0               : {pipeline, ['$1']}.
 
-Erlang code.
+element0 -> function0 : '$1'.
+element0 -> literal   : '$1'.
+element0 -> env       : '$1'.
 
-val({_,_,V}) -> V.
+element1s -> element1s '|' element1 : '$1'++['$3'].
+element1s -> element1               : ['$1'].
+
+element1 -> function1 : '$1'.
+element1 -> literal   : '$1'.
+
+function0 -> atom ':' atom '(' arg0s ')' : {call, '$1', '$3', '$5'}.
+function0 -> atom ':' atom '(' ')'       : {call, '$1', '$3', []}. 
+function0 -> atom ':' atom               : {call, '$1', '$3', []}. 
+
+arg0s -> arg0s ',' arg0 : '$1'++['$3'].
+arg0s -> arg0           : ['$1'].
+
+arg0 -> literal : '$1'.
+
+function1 -> atom ':' atom '(' arg1s ')' : {call, '$1', '$3', '$5'}.
+function1 -> atom ':' atom               : {call, '$1', '$3', ['$']}.
+function1 -> '$'                         : {call, '', 'dollar', ['$']}.
+
+arg1s -> arg1s ',' arg1 : '$1'++['$3'].
+arg1s -> arg1           : ['$1'].
+
+arg1 -> '$'     : '$'.
+arg1 -> literal : '$1'.
+
+literal -> int    : '$1'.
+literal -> float  : '$1'.
+literal -> string : '$1'.
+literal -> atom   : '$1'.
+
+env -> '$' string : {call, '', 'env', ['$2']}.
+env -> '$' var :    {call, '', 'env', ['$2']}.
+
+format -> fq : '$1'.
+format -> dq : '$1'.
+
+atom -> sq: '$1'.
+atom -> uq: '$1'.
+
+string -> dq: '$1'.
+string -> bq: '$1'.

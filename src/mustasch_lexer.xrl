@@ -1,50 +1,78 @@
 % mustasch lexer grammar.
-% tokens are;
-% '}}': end token
-% '{{', '.', ':': as themselves
-% int: an integer
-% sq: single quoted string
-% dq: double quoted string
-% bq: binary quoted string
-% uq: unquoted text
 
 Definitions.
 
-WS = [\000-\s]
-REGULAR = [^'"{}:0-9<\.\000-\s]
+SIGN = ([\-|\+]?)
+INT = ({SIGN}(([1-9][0-9]*)|0))
+FLOAT = ({INT}\.[0-9]+)
+EXP = (({INT}|{FLOAT})[Ee]{INT})
 
 Rules.
 
-{WS}+ :
+% whitespace, skipped
+[\000-\s]+ :
   skip_token.
 
-[0-9]+ :
-  {token,{int,TokenLine,TokenChars}}.
+% as themselves
+\{\{|\|\||\||\(|\)|\$|#|\.|,|:|=|\{|\} :
+  {token, {list_to_atom(TokenChars), TokenLine}}.
 
+% end token
+\}\} :
+  {end_token, {list_to_atom(TokenChars), TokenLine}}.
+
+% numbers
+{INT} :
+  {token, {int, TokenLine, list_to_integer(TokenChars)}}.  
+
+{FLOAT} :
+  {token, {float, TokenLine, list_to_float(TokenChars)}}.
+
+{EXP} :
+  {token, mk_int_or_float(TokenLine, TokenChars)}.
+
+%% strings are represented as lists in the token. there are 5 kinds;
+%% binary-quoted, double-quoted, single-quoted, format-quoted, unquoted.
+
+% binary string
 <<"([^"]|\\")*">> :
-  {token,{bq,TokenLine,btrim(3,TokenChars)}}.
+  {token, {bq, TokenLine, trim(TokenChars)}}.
 
+% double-quoted string
 "([^"]|\\")*" :
-  {token,{dq,TokenLine,btrim(1,TokenChars)}}.
+  {token, {dq, TokenLine, trim(TokenChars)}}.
 
+% single-quoted string
 '([^']|\\')*' :
-  {token,{sq,TokenLine,btrim(1,TokenChars)}}.
+  {token, {sq, TokenLine, trim(TokenChars)}}.
 
-\. :
-  {token,{'.',TokenLine}}.
+% format string
+(~[a-zA-Z]+(\.[0-9]+(\.[0-9])?)?)+ :
+  {token, {fq, TokenLine, TokenChars}}.
 
-: :
-  {token,{':',TokenLine}}.
+% unquoted string, basically an atom()
+[a-z][a-zA-Z0-9_]* :
+  {token, {uq, TokenLine, TokenChars}}.
 
-{{ :
-  {token,{'{{',TokenLine}}.
-
-}} :
-  {end_token,{'}}',TokenLine}}.
-
-({REGULAR}|<[^<]|<<[^"]|}[^}]|\\{|\\})+ :
-  {token,{uq,TokenLine,TokenChars}}.
+% variable
+[A-Z][a-zA-Z0-9_]* :
+  {token, {var, TokenLine, TokenChars}}.
 
 Erlang code.
 
-btrim(N,S) -> lists:reverse(lists:nthtail(N,lists:reverse(lists:nthtail(N,S)))).
+% trim quotes
+-define(TRIM(X), fun(Z) -> X++T = lists:reverse(Z), lists:reverse(T) end).
+trim(Chars) ->
+    case Chars of
+        "<<\""++S -> (?TRIM(">>\""))(S);
+        "\""++S   -> (?TRIM("\""))(S);
+        "'"++S    -> (?TRIM("'"))(S);
+        _         -> Chars
+    end.
+
+% handle expoments, like "10e-1"
+mk_int_or_float(L, T) ->
+    case mustach_exp:go(T) of
+        I when is_integer(I) -> {int, L, I};
+        F when is_float(F) -> {float, L, F}
+    end.
